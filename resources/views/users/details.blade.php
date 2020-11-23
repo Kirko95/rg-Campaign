@@ -5,24 +5,13 @@
     <div class="d-flex justify-content-between">
         <div class="clearfix">
             <div class="pd-t-5 pd-b-5">
-                <h1 class="pd-0 mg-0 tx-20 tx-dark">Campaign Details</h1>
+                <h1 class="pd-0 mg-0 tx-20 tx-dark">{{ $campaign->name }}</h1>
             </div>
             <div class="breadcrumb pd-0 mg-0">
                 <a class="breadcrumb-item" href="index.html"><i class="icon ion-ios-home-outline"></i> Home</a>
-                <span class="breadcrumb-item active">Campaign</span>
-                <span class="breadcrumb-item active">Details</span>
+                <span class="breadcrumb-item active">Campaigns</span>
+                <span class="breadcrumb-item active">{{ $campaign->name }}</span>
             </div>
-        </div>
-        <div class="float-right">
-            <form action="{{ route('clockin') }}" method="POST">
-                @csrf
-                <input type="hidden" name="type" value="clockout">
-                <input type="hidden" name="campaign" value="{{ $inventories[0]->campaign->id }}">
-                <input type="hidden" name="time" value="{{ Carbon\Carbon::now() }}">
-                <button class="btn btn-sm btn-outline-danger tx-gray-500 small">
-                    <i data-feather="clock" class="wd-15 align-middle mr-1"></i>Clock Out
-                </button>
-            </form>
         </div>
     </div>
 </div>
@@ -131,28 +120,26 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h6 class="card-header-title tx-13 mb-0">Action</h6>
                     <div class="float-right">
-                        @if (Carbon\Carbon::parse($timesheet[0]->time)->format('d-m-Y') == Carbon\Carbon::today()->format('d-m-Y'))
-                            @if ($timesheet[0]->type == 'clockin')
-                                <form action="{{ route('clockin') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="type" value="lunch">
-                                    <input type="hidden" name="campaign" value="{{ $item->campaign_id }}">
-                                    <input type="hidden" name="time" value="{{ Carbon\Carbon::now() }}">
-                                    <button class="btn btn-sm btn-outline-primary tx-gray-500 small">
-                                        <i data-feather="clock" class="wd-15 align-middle mr-1"></i>Lunch Break
-                                    </button>
-                                </form>
-                            @elseif($timesheet[1]->type == 'lunch')
-                                <form action="{{ route('clockin') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="type" value="clockout">
-                                    <input type="hidden" name="campaign" value="{{ $item->campaign_id }}">
-                                    <input type="hidden" name="time" value="{{ Carbon\Carbon::now() }}">
-                                    <button class="btn btn-sm btn-outline-primary tx-gray-500 small">
-                                        <i data-feather="clock" class="wd-15 align-middle mr-1"></i>Lunch Break
-                                    </button>
-                                </form>
-                            @endif
+                        @if ($checktimer->type == 'clockin')
+                            <form action="{{ route('clockin') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="type" value="lunch">
+                                <input type="hidden" name="campaign" value="{{ $item->campaign_id }}">
+                                <input type="hidden" name="time" value="{{ Carbon\Carbon::now('Africa/Nairobi') }}">
+                                <button class="btn btn-sm btn-outline-primary tx-gray-500 small">
+                                    <i data-feather="clock" class="wd-15 align-middle mr-1"></i>Lunch Break
+                                </button>
+                            </form>
+                        @elseif($checktimer->type == 'lunch')
+                            <form action="{{ route('clockin') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="type" value="clockout">
+                                <input type="hidden" name="campaign" value="{{ $item->campaign_id }}">
+                                <input type="hidden" name="time" value="{{ Carbon\Carbon::now('Africa/Nairobi') }}">
+                                <button class="btn btn-sm btn-outline-danger tx-gray-500 small">
+                                    <i data-feather="clock" class="wd-15 align-middle mr-1"></i>Clockout
+                                </button>
+                            </form>
                         @endif
                     </div>
                 </div>
@@ -167,15 +154,22 @@
                        </tr>
                     </thead>
                     <tbody>
-                        @foreach ($timesheet as $item)
+                        @php
+                            $a = 1;
+                        @endphp
+                        @foreach ($timesheet ?? '' as $item)
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <span class="tx-semibold d-none d-xl-inline-block">{{ $item->id }}</span>
+                                        <span class="tx-semibold d-none d-xl-inline-block">
+                                            @php
+                                                echo $a++;
+                                            @endphp
+                                        </span>
                                     </div>
                                 </td>
                                 <td>
-                                    {{ \Carbon\Carbon::parse($item->time)->format('g:i A') }}
+                                    {{ \Carbon\Carbon::parse($item->time, 'Africa/Nairobi')->format('g:i A') }}
                                 </td>
                                 <td>
                                     {{ $item->type }}
@@ -186,6 +180,57 @@
                 </table>
             </div>
         </div>
+    </div>
+</div>
+<div class="conatiner">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h6 class="card-header-title tx-13 mb-0">Inventory</h6>
+        </div>
+    </div>
+    <div class="card-body pd-0 table-responsive">
+        <table class="table table-hover mg-0">
+            <thead class="tx-10 tx-uppercase bd-t">
+            <tr>
+                <th>#</th>
+                <th>Product</th>
+                <th>Product Type</th>
+                <th>Type</th>
+                <th>Quantity</th>
+                <th>Remarks</th>
+                <th>Date</th>
+            </tr>
+            </thead>
+            <tbody>
+                @foreach ($stocks as $item)
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="tx-semibold d-none d-xl-inline-block">{{ $item->id }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            {{ $item->inventory->name }}
+                        </td>
+                        <td>
+                            {{ $item->inventory->type }}
+                        </td>
+                        <td>
+                            {{ $item->type }}
+                        </td>
+                        <td>
+                            {{ $item->inventory->quantity }}
+                        </td>
+                        <td>
+                            {{ $item->remarks }}
+                        </td>
+                        <td>
+                            {{ $item->created_at }}
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 </div>
 @endsection

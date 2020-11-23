@@ -6,19 +6,20 @@
     <div class="d-flex justify-content-between">
         <div class="clearfix">
             <div class="pd-t-5 pd-b-5">
-                <h1 class="pd-0 mg-0 tx-20 tx-dark">DSTV</h1>
+                <h1 class="pd-0 mg-0 tx-20 tx-dark">{{ $campaign->name }}</h1>
             </div>
             <div class="breadcrumb pd-0 mg-0">
-                <a class="breadcrumb-item" href="index.html"><i class="icon ion-ios-home-outline"></i> Home</a>
+                <a class="breadcrumb-item" href="#"><i class="icon ion-ios-home-outline"></i> Home</a>
                 <a class="breadcrumb-item" href="">Dashboard</a>
+                <span class="breadcrumb-item active">Details</span>
             </div>
         </div>
-        <div class="container">
+        {{-- <div class="container">
             <form action="{{ route('report', [$campaign->id]) }}" method="GET">
                 @csrf
                 <button class="float-right btn btn-outline-primary">Generate Report</button>
             </form>
-        </div>
+        </div> --}}
     </div>
 </div>
 <div class="row clearfix">
@@ -79,20 +80,7 @@
                         </div>
                         <div class="d-flex align-items-center">
                             @include('charts.timechart')
-                            <div>
-                                <div class="d-flex align-items-center">
-                                    <div class="wd-12 ht-12 bd bd-3 rounded-circle bd-primary mr-2"></div>
-                                    <div class="tx-gray-500">100% Turnup</div>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <div class="wd-12 ht-12 bd bd-3 rounded-circle bd-warning mr-2"></div>
-                                    <div class="tx-gray-500">2% Late</div>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <div class="wd-12 ht-12 bd bd-3 rounded-circle bd-success mr-2"></div>
-                                    <div class="tx-gray-500">98% On Time</div>
-                                </div>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -106,20 +94,7 @@
                         </div>
                         <div class="d-flex align-items-center">
                             @include('charts.stockchart')
-                            <div>
-                                <div class="d-flex align-items-center">
-                                    <div class="wd-12 ht-12 bd bd-3 rounded-circle bd-primary mr-2"></div>
-                                    <div class="tx-gray-500">+10% Stocks</div>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                        <div class="wd-12 ht-12 bd bd-3 rounded-circle bd-warning mr-2"></div>
-                                        <div class="tx-gray-500">-7% Merchandise</div>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <div class="wd-12 ht-12 bd bd-3 rounded-circle bd-success mr-2"></div>
-                                    <div class="tx-gray-500">+20% Sales</div>
-                                </div>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>

@@ -10,6 +10,7 @@
         hooks: new ChartisanHooks()
             .colors(['#4299E1','#FE0045','#C07EF1','#67C560','#ECC94B'])
             .datasets('pie')
+            .tooltip()
             .axis(false)
     });
 </script>

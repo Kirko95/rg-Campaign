@@ -23,18 +23,19 @@ class TimeSheet extends BaseChart
     {
         $user = Auth()->user()->id;
         $campaign = Campaign::where('company_id', $user)->first();
-        $timesheets = TimeSheetModel::where('campaign_id', $campaign->id)->get();
+        $timesheets = TimeSheetModel::where('campaign_id', $campaign->id)
+            ->with('user')
+            ->whereDate('created_at', '=', date('Y-m-d'))
+            ->get();
 
-        $times = [];
+        $data = [];
         $labels = [];
-        $timelines = [];
         foreach ($timesheets as $item) {
-            array_push($times ,$item->id);
+            array_push($data, $item->user->id);
             array_push($labels, $item->type);
-            array($timelines, $item->time);
         }
         return Chartisan::build()
             ->labels($labels)
-            ->dataset('Users', $times);
+            ->dataset('users_timesheet', $data);
     }
 }

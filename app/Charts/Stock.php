@@ -9,6 +9,7 @@ use ConsoleTVs\Charts\BaseChart;
 use Illuminate\Http\Request;
 use App\Models\Inventory;
 use App\Models\Campaign;
+use App\Models\Stock as StockModel;
 
 class Stock extends BaseChart
 {
@@ -22,15 +23,20 @@ class Stock extends BaseChart
         $user = Auth()->user()->id;
         $campaign = Campaign::where('company_id', $user)->first();
         $inventories = Inventory::where('campaign_id', $campaign->id)->get();
+        $stocks = StockModel::where('campaign_id', $campaign->id)
+            ->with('inventory')
+            ->whereDate('created_at', '=', date('Y-m-d'))
+            ->get();
 
+        $data = [];
         $labels = [];
-        $product_type = [];
-        foreach ($inventories as $item) {
-            array_push($labels, $item->name);
-            array_push($product_type, $item->id);
+        foreach ($stocks as $item) {
+            array_push($labels, $item->inventory->type);
+            array_push($labels, $item->inventory->quantity);
+            array_push($data, $item->quantity);
         }
         return Chartisan::build()
             ->labels($labels)
-            ->dataset('product_type', $product_type);
+            ->dataset('product_type', $data);
     }
 }

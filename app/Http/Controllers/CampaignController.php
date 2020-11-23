@@ -89,9 +89,20 @@ class CampaignController extends Controller
     public function details($id)
     {
         $inventories = Inventory::where('campaign_id', $id)->get();
-        $timesheet = Timesheet::where('campaign_id', $id)->orderBy('time')->limit(4)->get();
+        $campaign = Campaign::findOrFail($id);
+        $timesheet = Timesheet::where('campaign_id', $id)
+            ->where('user_id', Auth()->user()->id)
+            ->whereDate('time', '=', date('Y-m-d'))
+            ->get();
+        $checktimer = Timesheet::where('campaign_id', $id)
+            ->where('user_id', Auth()->user()->id)
+            ->whereDate('time', '=', date('Y-m-d'))
+            ->orderBy('time', 'DESC')
+            ->first();
 
-        return view('users.details', compact('inventories', 'timesheet'));
+        $stocks = Stock::where('user_id', Auth()->user()->id)->where('campaign_id', $campaign->id)->with('inventory')->get();
+
+        return view('users.details', compact('inventories', 'timesheet', 'checktimer', 'campaign', 'stocks'));
     }
 
     public function update($id)

@@ -20,6 +20,14 @@ class ReportController extends Controller
         $inventories = Stock::where('campaign_id', $campaign->id)->with('inventory')->orderBy('created_at')->get();
         $timesheet = TimeSheet::where('campaign_id', $campaign->id)->with('user')->orderBy('created_at')->get();
         $team = Team::where('campaign_id', $campaign->id)->with('user')->orderBy('created_at')->get();
+
+        $data = compact('campaign', 'inventories', 'timesheet', 'team');
+
+        $pdf = PDF::setOptions(['isHtml5ParserEnabled' =>true, 'isRamoteEnabled' => true]);
+        $pdf = PDF::loadView('reports.details', $data);
+
+
+        return $pdf->download('report.pdf');
     
         return view('reports.details', compact('campaign', 'inventories', 'timesheet', 'team'));
     }
